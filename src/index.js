@@ -1,5 +1,7 @@
-var flex = require('./flex.vue'),
-    flexItem = require('./flex-item.vue');
+var flex = require('./flex'),
+    flexItem = require('./flex-item');
+
+require('./index.css');
 
 module.exports= {
     flex: flex,

@@ -1,0 +1,135 @@
+.vue-flex,
+.vue-flex_inner {
+    display: flex;
+}
+
+.vue-flex--flex-direction-row {
+    flex-direction: row;
+}
+
+.vue-flex--flex-direction-row-reverse {
+    flex-direction: row-reverse;
+}
+
+.vue-flex--flex-direction-column {
+    flex-direction: column;
+}
+
+.vue-flex--flex-direction-column-reverse {
+    flex-direction: column-reverse;
+}
+
+.vue-flex--flex-wrap-nowrap {
+    flex-wrap: nowrap;
+}
+
+.vue-flex--flex-wrap-wrap {
+    flex-wrap: wrap;
+}
+
+.vue-flex--flex-wrap-wrap-reverse {
+    flex-wrap: wrap-reverse;
+}
+
+.vue-flex--justify-content-flex-start {
+    justify-content:flex-start;
+}
+
+.vue-flex--justify-content-flex-end {
+    justify-content: flex-end;
+}
+
+.vue-flex--justify-content-center {
+    justify-content: center;
+}
+
+.vue-flex--justify-content-space-between {
+    justify-content: space-between;
+}
+
+.vue-flex--justify-content-space-around {
+    justify-content: space-around;
+}
+
+.vue-flex--align-items-flex-start {
+    align-items: flex-start;
+}
+
+.vue-flex--align-items-flex-end {
+    align-items: flex-end;
+}
+
+.vue-flex--align-items-center {
+    align-items: center;
+}
+
+.vue-flex--align-items-stretch {
+    align-items: stretch;
+}
+
+.vue-flex--align-items-baseline {
+    align-items: baseline;
+}
+
+.vue-flex--align-content-flex-start {
+    align-content: flex-start;
+}
+
+.vue-flex--align-content-flex-end {
+    align-content: flex-end;
+}
+
+.vue-flex--align-content-center {
+    align-content: center;
+}
+
+.vue-flex--align-content-stretch {
+    align-content: stretch;
+}
+
+.vue-flex--align-content-space-between {
+    align-content: space-between;
+}
+
+.vue-flex--align-content-space-around {
+    align-content: space-around;
+}
+
+.vue-flex-item {
+
+    /*
+        Fix: default value of 'flex' property is '0 1 auto' in modern browser,
+        but it is '0 0 auto' in Internet Explorer 10
+    */
+    flex: 0 1 auto;
+
+    /*
+        Fix: When using "align-items:center" on a flex container in the column direction,
+        the contents of flex item, if too big, will overflow their container in IE 10-11.
+    */
+    max-width: 100%;
+}
+
+.vue-flex-item--align-self-auto {
+    align-self: auto;
+}
+
+.vue-flex-item--align-self-flex-start {
+    align-self: flex-start;
+}
+
+.vue-flex-item--align-self-flex-end {
+    align-self: flex-end;
+}
+
+.vue-flex-item--align-self-center {
+    align-self: center;
+}
+
+.vue-flex-item--align-self-baseline {
+    align-self: baseline;
+}
+
+.vue-flex-item--align-self-stretch {
+    align-self: stretch;
+}
