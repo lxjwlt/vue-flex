@@ -2,6 +2,7 @@ const pkg = require('./package.json');
 const isMin = process.env.NODE_ENV === 'min';
 const isDoc = process.env.NODE_ENV === 'doc';
 const targetDir = isDoc ? 'docs/static' : 'dist';
+const name = pkg.name.replace(/^@[^\/]+\//, '');
 
 function d (arr) {
     return arr.filter((v) => v);
@@ -10,7 +11,7 @@ function d (arr) {
 module.exports = {
     banner: [
         '/**',
-        ` * ${pkg.name} v${pkg.version}`,
+        ` * ${name} v${pkg.version}`,
         ` * (c) 2017-present ${pkg.author}`,
         ` * Released under the ${pkg.license} license`,
         ` * ${pkg.repository.url}`,
@@ -18,7 +19,7 @@ module.exports = {
     ].join('\n'),
     input: 'src/index.js',
     output: {
-        file: `${targetDir}/${pkg.name}${isMin ? '.min' : ''}.js`,
+        file: `${targetDir}/${name}${isMin ? '.min' : ''}.js`,
         format: 'umd',
         name: 'vue-flex'
     },
@@ -38,7 +39,7 @@ module.exports = {
         }),
         isMin ? require('rollup-plugin-uglify')({
             output: {
-                comments: new RegExp(`${pkg.name}\\sv\\d+\\.\\d+\\.\\d+`)
+                comments: new RegExp(`${name}\\sv\\d+\\.\\d+\\.\\d+`)
             }
         }) : null
     ])

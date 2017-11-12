@@ -1,6 +1,6 @@
 {
-  "name": "vue-flex",
-  "version": "1.0.0",
+  "name": "@lxjwlt/vue-flex",
+  "version": "0.0.1",
   "description": "vue components of flexbox fixing cross-browser bugs",
   "main": "dist/vue-flex.js",
   "scripts": {
@@ -8,11 +8,11 @@
     "build": "rollup -c && NODE_ENV=min rollup -c && NODE_ENV=doc rollup -c"
   },
   "keywords": [
-      "flex",
-      "flexbox",
-      "vue",
-      "components",
-      "bugs"
+    "flex",
+    "flexbox",
+    "vue",
+    "components",
+    "bugs"
   ],
   "author": "lxjwlt",
   "license": "MIT",
@@ -26,6 +26,7 @@
   "devDependencies": {
     "autoprefixer": "^7.1.6",
     "cssnano": "^3.10.0",
+    "express": "^4.16.2",
     "rollup": "^0.51.3",
     "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-node-resolve": "^3.0.0",
