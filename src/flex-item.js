@@ -10,6 +10,29 @@ function isUnitNumber (str) {
     return str && str.match && str.match(/^\d+[^\d]+$/);
 }
 
+function isEmptyCssValue (value) {
+    value = value.trim();
+    return !value || value === 'none' || parseInt(value, 10) === 0;
+}
+
+function hasPadding (style) {
+    return [
+        style.paddingLeft, style.paddingRight,
+        style.paddingTop, style.paddingBottom
+    ].some(function (value) {
+        return !isEmptyCssValue(value);
+    });
+}
+
+function hasBorder (style) {
+    return [
+        style.borderLeftWidth, style.borderRightWidth,
+        style.borderTopWidth, style.borderBottomWidth
+    ].some(function (value) {
+        return !isEmptyCssValue(value);
+    });
+}
+
 module.exports = {
 
     props: {
@@ -88,11 +111,46 @@ module.exports = {
         }
     },
 
+    watch: {
+        flex: function () {
+            this.__checkBoxSizingBug();
+        }
+    },
+
     render: function (createElem) {
         return createElem('div', {
             'class': ['vue-flex-item', this.cls],
             style: this.style
         }, [ this.$slots.default ]);
+    },
+
+    mounted: function () {
+        this.__checkBoxSizingBug();
+    },
+
+    methods: {
+        __checkBoxSizingBug: function () {
+            var vm = this;
+            vm.$nextTick(function () {
+                var style = window.getComputedStyle(vm.$el);
+
+                if (style.boxSizing === 'content-box') {
+                    return;
+                }
+
+                var arr = vm.currentFlex.split(/\s+/g);
+
+                if (arr[2] && arr[2] !== 'auto' && !isEmptyCssValue(arr[2]) &&
+                    (hasPadding(style) || hasBorder(style))) {
+                    throw(new Error([
+                        'It is not allowed to Apply "padding" or "border" to a flex item,',
+                        'when using "flex-basis" to determine its size.',
+                        'because IE 10-11 always assume a content box model in this case,',
+                        'even if that item is set to "box-sizing:border-box".'
+                    ].join(' ')));
+                }
+            });
+        }
     }
 
 };
