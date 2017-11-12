@@ -1,5 +1,7 @@
 const pkg = require('./package.json');
 const isMin = process.env.NODE_ENV === 'min';
+const isDoc = process.env.NODE_ENV === 'doc';
+const targetDir = isDoc ? 'docs/static' : 'dist';
 
 function d (arr) {
     return arr.filter((v) => v);
@@ -16,7 +18,7 @@ module.exports = {
     ].join('\n'),
     input: 'src/index.js',
     output: {
-        file: `dist/${pkg.name}${isMin ? '.min' : ''}.js`,
+        file: `${targetDir}/${pkg.name}${isMin ? '.min' : ''}.js`,
         format: 'umd',
         name: 'vue-flex'
     },

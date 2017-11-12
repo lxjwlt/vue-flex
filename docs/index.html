@@ -1,0 +1,228 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .doc-box {
+
+        }
+
+        .vue-flex--align-items-baseline .vue-flex-item:nth-child(2n+1) {
+            font-size: 40px;
+        }
+
+        .vue-flex {
+            margin: 20px 0;
+            background-color: #f9fafc;
+        }
+
+        .vue-flex-item {
+            min-height: 35px;
+            border-radius: 4px;
+            background-color: #d3dce6;
+            color: #fff;
+            text-align: center;
+            position: relative;
+        }
+
+        .vue-flex-item:nth-child(2n) {
+            background-color: #e5e9f2;
+        }
+
+        .doc-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .vue-flex--align-items-baseline .doc-text {
+            position: static;
+            -webkit-transform: none;
+            -ms-transform: none;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="doc">
+    <div class="doc-box">
+        <h2 class="doc-title">
+            basic flex
+        </h2>
+        <flex>
+            <flex-item v-for="index of getList(3)">
+                <div class="doc-text">
+                    {{index + 1}}
+                </div>
+            </flex-item>
+        </flex>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            flex-direction
+        </h2>
+        <template v-for="value of flexDirection">
+            {{value}}
+            <flex :flex-direction="value">
+                <flex-item v-for="index of getList(3)">
+                    <div class="doc-text">
+                        {{index + 1}}
+                    </div>
+                </flex-item>
+            </flex>
+        </template>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            flex-wrap
+        </h2>
+        <template v-for="value of flexWrap">
+            {{value}}
+            <flex :flex-wrap="value">
+                <flex-item v-for="index of getList(6)" flex="1 1 30%">
+                    <div class="doc-text">
+                        {{index + 1}}
+                    </div>
+                </flex-item>
+            </flex>
+        </template>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            justify-content
+        </h2>
+        <template v-for="value of justifyContent">
+            {{value}}
+            <flex :justify-content="value">
+                <flex-item v-for="index of getList(3)" flex="0 1 20%">
+                    <div class="doc-text">
+                        {{index + 1}}
+                    </div>
+                </flex-item>
+            </flex>
+        </template>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            align-items
+        </h2>
+        <template v-for="value of alignItems">
+            {{value}}
+            <flex :align-items="value" style="height:100px;">
+                <flex-item v-for="index of getList(3)">
+                    <div class="doc-text">
+                        {{index + 1}}
+                    </div>
+                </flex-item>
+            </flex>
+        </template>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            align-content
+        </h2>
+        <template v-for="value of alignContent">
+            {{value}}
+            <flex :align-content="value"
+                  flex-wrap="wrap" style="height:200px;">
+                <flex-item v-for="index of getList(9)" flex="30%">
+                    <div class="doc-text">
+                        {{index + 1}}
+                    </div>
+                </flex-item>
+            </flex>
+        </template>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            order
+        </h2>
+        <flex justify-content="space-between">
+            <flex-item order="99" flex="0 1 30%">
+                <div class="doc-text">
+                    (1) in third place
+                </div>
+            </flex-item>
+            <flex-item order="2" flex="0 1 30%">
+                <div class="doc-text">
+                    (2) in first place
+                </div>
+            </flex-item>
+            <flex-item order="12" flex="0 1 30%">
+                <div class="doc-text">
+                    (3) in second place
+                </div>
+            </flex-item>
+        </flex>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            align-self
+        </h2>
+        <template v-for="value in alignSelf">
+            {{value}}
+            <flex style="height: 100px" align-items="flex-start">
+                <flex-item>
+                    <div class="doc-text">
+                        1
+                    </div>
+                </flex-item>
+                <flex-item :align-self="value">
+                    <div class="doc-text">
+                        2
+                    </div>
+                </flex-item>
+                <flex-item>
+                    <div class="doc-text">
+                        3
+                    </div>
+                </flex-item>
+            </flex>
+        </template>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.3/dist/vue.min.js"></script>
+<script src="./static/vue-flex.js"></script>
+<script>
+    Vue.use(window['vue-flex']);
+
+    new Vue({
+        el: '#app',
+        data: {
+            flexWrap: [
+                'nowrap', 'wrap', 'wrap-reverse'
+            ],
+            flexDirection: [
+                'row', 'row-reverse', 'column', 'column-reverse'
+            ],
+            justifyContent: [
+                'flex-start', 'flex-end', 'center', 'space-around', 'space-between'
+            ],
+            alignItems: [
+                'flex-start', 'flex-end', 'center', 'stretch', 'baseline'
+            ],
+            alignContent: [
+                'flex-start', 'flex-end', 'center', 'stretch', 'space-between', 'space-around'
+            ],
+            alignSelf: [
+                'auto', 'flex-start', 'flex-end', 'center', 'stretch'
+            ]
+        },
+        methods: {
+            getList (num) {
+                return Array.apply(null, Array(num)).map(function (v, i) {
+                    return i;
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

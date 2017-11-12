@@ -5,7 +5,7 @@
   "main": "dist/vue-flex.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c && NODE_ENV=min rollup -c"
+    "build": "rollup -c && NODE_ENV=min rollup -c && NODE_ENV=doc rollup -c"
   },
   "keywords": [
       "flex",
