@@ -3,6 +3,12 @@
     display: flex;
 }
 
+.vue-flex_inner {
+    width: 100%;
+    min-height: inherit;
+    max-height: inherit;
+}
+
 .vue-flex--flex-direction-row {
     flex-direction: row;
 }
@@ -98,10 +104,9 @@
 .vue-flex-item {
 
     /*
-        Fix: default value of 'flex' property is '0 1 auto' in modern browser,
-        but it is '0 0 auto' in Internet Explorer 10
+        Fix: default value of 'flex-shrink' property is '0' in IE10
     */
-    flex: 0 1 auto;
+    flex: 1 1 0%;
 
     /*
         Fix: When using "align-items:center" on a flex container in the column direction,

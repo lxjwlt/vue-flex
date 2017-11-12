@@ -7,7 +7,7 @@ module.exports= {
     flex: flex,
     flexItem: flexItem,
     install: function (Vue) {
-        Vue.component('vue-flex', flex);
-        Vue.component('vue-item', flexItem);
+        Vue.component('flex', flex);
+        Vue.component('flex-item', flexItem);
     }
 };

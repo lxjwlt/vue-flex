@@ -17,7 +17,8 @@ module.exports = {
             type: [Number, String]
         },
         flex: {
-            type: [Number, String]
+            type: [Number, String],
+            'default': 1
         },
         alignSelf: {
             type: String
