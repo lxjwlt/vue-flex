@@ -2,6 +2,8 @@
 
 `vue-flex` is a vue component which provide `flexbox` features, automatically fix cross-browser bugs mentioned in [Flexbugs](https://github.com/philipwalton/flexbugs), and works in **IE10+** and modern browser.
 
+here is [example page](https://lxjwlt.github.io/vue-flex)
+
 ## Installation
 
 ```
