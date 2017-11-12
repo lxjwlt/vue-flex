@@ -6,6 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         .doc {
             font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
         }
@@ -262,6 +266,40 @@
             </flex>
         </template>
     </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            provide workarounds for cross-browser bug
+        </h2>
+
+        Fix: IE10-11, containers with display: flex and flex-direction: column will not properly calculate their flexed childrens' sizes if the container has min-height but no explicit height property
+
+        <flex style="min-height: 200px" flex-direction="column">
+            <flex-item v-for="index of getList(3)">
+                <div class="doc-text">
+                    {{index + 1}}
+                </div>
+            </flex-item>
+        </flex>
+
+        Fix: IE 11 does not vertically align items correctly when min-height is used
+
+        <flex style="min-height: 200px" align-items="center">
+            <flex-item v-for="index of getList(2)">
+                <div class="doc-text">
+                    {{index + 1}}
+                </div>
+            </flex-item>
+        </flex>
+
+        Fix: When using align-items:center on a flex container in the column direction, the contents of flex item, if too big, will overflow their container in IE 10-11.
+
+        <flex style="height: 200px;width:300px" align-items="center"
+              flex-direction="column" justify-content="center">
+            <flex-item flex="initial">
+                the content of box would not overflow this box
+            </flex-item>
+        </flex>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.3/dist/vue.min.js"></script>
@@ -292,7 +330,7 @@
             ]
         },
         methods: {
-            getList (num) {
+            getList: function (num) {
                 return Array.apply(null, Array(num)).map(function (v, i) {
                     return i;
                 });
