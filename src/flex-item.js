@@ -28,7 +28,7 @@ module.exports = {
     computed: {
         cls: function () {
             if (this.alignSelf) {
-                return 'vue-item--align-self-' + this.alignSelf;
+                return 'vue-flex-item--align-self-' + this.alignSelf;
             }
         },
         currentFlex: function () {
