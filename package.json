@@ -5,8 +5,12 @@
   "main": "dist/vue-flex.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c && NODE_ENV=min rollup -c && NODE_ENV=doc rollup -c"
+    "build": "rollup -c && NODE_ENV=min rollup -c && NODE_ENV=doc rollup -c",
+    "publish": "npm publish --access public"
   },
+  "files": [
+      "dist", "src"
+  ],
   "keywords": [
     "flex",
     "flexbox",
@@ -32,5 +36,8 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-postcss": "^0.5.5",
     "rollup-plugin-uglify": "^2.0.1"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }

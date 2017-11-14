@@ -46,7 +46,7 @@ module.exports = {
     render: function (createElem) {
 
         /**
-         * Fix bugs of IE10-11 by nested flex wrapper:
+         * Fix bugs of IE10-11 by nested flex wrapper and a extra min-height-holder:
          * 1. In IE 10-11, if min-height declarations on flex containers,
          *    their flex item children calculate size incorrectly.
          * 2. "align-content:center" doesn't work if "min-height" declarations on flex containers
@@ -57,7 +57,10 @@ module.exports = {
         }, [
             createElem('div', {
                 'class': ['vue-flex_inner', this.cls]
-            }, this.$slots.default)
+            }, this.$slots.default),
+            createElem('div', {
+                'class': 'vue-flex_min-height-holder'
+            })
         ]);
     }
 

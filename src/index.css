@@ -4,9 +4,15 @@
 }
 
 .vue-flex_inner {
-    width: 100%;
+    -webkit-flex: 1 1 0%;
+    -ms-flex: 1 1 0%;
+    flex: 1 1 0%;
+}
+
+.vue-flex_min-height-holder {
+    display: inline-block;
     min-height: inherit;
-    max-height: inherit;
+    visibility: hidden;
 }
 
 .vue-flex--flex-direction-row {
