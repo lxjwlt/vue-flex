@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c && NODE_ENV=min rollup -c && NODE_ENV=doc rollup -c",
-    "publish": "npm publish --access public"
+    "publish": "npm publish --access public",
+    "server": "node server.js"
   },
   "files": [
       "dist", "src"
