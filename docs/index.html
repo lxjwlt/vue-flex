@@ -18,7 +18,8 @@
             font-size: 40px;
         }
 
-        .vue-flex {
+        .vue-flex,
+        .vue-inline-flex {
             margin: 20px 0;
             background-color: #f9fafc;
         }
@@ -274,17 +275,27 @@
         <flex gutter="20" flex-wrap="wrap">
             <flex-item v-for="value in getList(6)" flex="30%">
                 <div class="doc-text">
-                    {{value}}
+                    {{value+1}}
                 </div>
             </flex-item>
         </flex>
         <flex gutter="20" flex-wrap="wrap" flex-direction="column">
             <flex-item v-for="value in getList(3)">
                 <div class="doc-text">
-                    {{value}}
+                    {{value+1}}
                 </div>
             </flex-item>
         </flex>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            inline-flex
+        </h2>
+        <inline-flex>
+            <flex-item v-for="value in getList(18)">
+                {{value+1}}
+            </flex-item>
+        </inline-flex>
     </div>
     <div class="doc-box">
         <h2 class="doc-title">
