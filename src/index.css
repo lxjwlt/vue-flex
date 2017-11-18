@@ -3,6 +3,11 @@
     display: flex;
 }
 
+.vue-inline-flex,
+.vue-inline-flex_inner {
+    display: inline-flex;
+}
+
 .vue-flex_inner {
     -webkit-flex: 1 1 0%;
     -ms-flex: 1 1 0%;
