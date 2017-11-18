@@ -36,16 +36,12 @@ function hasBorder (style) {
 module.exports = {
 
     props: {
-        order: {
-            type: [Number, String]
-        },
+        order: [Number, String],
         flex: {
             type: [Number, String],
             'default': 1
         },
-        alignSelf: {
-            type: String
-        }
+        alignSelf: String
     },
 
     computed: {
@@ -96,7 +92,8 @@ module.exports = {
             return value;
         },
         style: function () {
-            var style = {};
+            var style = {},
+                parent = this.$parent;
 
             if (this.order || this.order === 0) {
                 style.msFlexOrder = this.order;
@@ -105,6 +102,12 @@ module.exports = {
 
             if (this.currentFlex) {
                 style.flex = this.currentFlex;
+            }
+
+            if (parent.cGutter) {
+                style.marginTop = style.marginBottom =
+                    style.marginLeft = style.marginRight =
+                        (parent.cGutter / 2) + 'px';
             }
 
             return style;
@@ -119,7 +122,7 @@ module.exports = {
 
     render: function (createElem) {
         return createElem('div', {
-            'class': ['vue-flex-item', this.cls],
+            class: ['vue-flex-item', this.cls],
             style: this.style
         }, [ this.$slots.default ]);
     },

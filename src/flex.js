@@ -11,21 +11,12 @@ function fixName (name) {
 module.exports = {
 
     props: {
-        flexDirection: {
-            type: String
-        },
-        flexWrap: {
-            type: String
-        },
-        justifyContent: {
-            type: String
-        },
-        alignItems: {
-            type: String
-        },
-        alignContent: {
-            type: String
-        }
+        flexDirection: String,
+        flexWrap: String,
+        justifyContent: String,
+        alignItems: String,
+        alignContent: String,
+        gutter: [String, Number]
     },
 
     computed: {
@@ -40,6 +31,20 @@ module.exports = {
             }).map(function (name) {
                 return 'vue-flex--' + fixName(name) + '-' + vm[name];
             });
+        },
+        cGutter: function () {
+            return Number(this.gutter) || 0;
+        },
+        css: function () {
+            if (this.cGutter) {
+                var margin = -(this.cGutter / 2) + 'px';
+                return {
+                    'margin-left': margin,
+                    'margin-right': margin,
+                    'margin-top': margin,
+                    'margin-bottom': margin
+                };
+            }
         }
     },
 
@@ -53,13 +58,14 @@ module.exports = {
          *    in column direction in IE 10-11
          */
         return createElem('div', {
-            'class': 'vue-flex'
+            class: 'vue-flex'
         }, [
             createElem('div', {
-                'class': ['vue-flex_inner', this.cls]
+                class: ['vue-flex_inner', this.cls],
+                style: this.css
             }, this.$slots.default),
             createElem('div', {
-                'class': 'vue-flex_min-height-holder'
+                class: 'vue-flex_min-height-holder'
             })
         ]);
     }
