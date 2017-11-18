@@ -4,13 +4,15 @@
   "description": "vue components of flexbox fixing cross-browser bugs",
   "main": "dist/vue-flex.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "karma start test/karma.dev.config.js --single-run",
+    "dev": "karma start test/karma.dev.config.js",
     "build": "rollup -c && NODE_ENV=min rollup -c && NODE_ENV=doc rollup -c",
     "publish": "npm publish --access public",
     "server": "node server.js"
   },
   "files": [
-      "dist", "src"
+    "dist",
+    "src"
   ],
   "keywords": [
     "flex",
@@ -30,13 +32,22 @@
   },
   "devDependencies": {
     "autoprefixer": "^7.1.6",
+    "chai": "^4.1.2",
     "cssnano": "^3.10.0",
     "express": "^4.16.2",
+    "karma": "^1.7.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-rollup-preprocessor": "^5.0.2",
+    "karma-sourcemap-loader": "^0.3.7",
+    "mocha": "^4.0.1",
     "rollup": "^0.51.3",
     "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-postcss": "^0.5.5",
-    "rollup-plugin-uglify": "^2.0.1"
+    "rollup-plugin-uglify": "^2.0.1",
+    "vue": "^2.5.5"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
