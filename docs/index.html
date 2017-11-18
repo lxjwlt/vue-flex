@@ -134,6 +134,60 @@
     </div>
     <div class="doc-box">
         <h2 class="doc-title">
+            provide workarounds for cross-browser bug
+        </h2>
+
+        Fix: IE10-11, containers with display: flex and flex-direction: column will not properly calculate their flexed childrens' sizes if the container has min-height but no explicit height property
+
+        <flex style="min-height: 200px" flex-direction="column">
+            <flex-item v-for="index of getList(3)">
+                <div class="doc-text">
+                    {{index + 1}}
+                </div>
+            </flex-item>
+        </flex>
+
+        Fix: IE 11 does not vertically align items correctly when min-height is used
+
+        <flex style="min-height: 200px" align-items="center">
+            <flex-item v-for="index of getList(2)">
+                <div class="doc-text">
+                    {{index + 1}}
+                </div>
+            </flex-item>
+        </flex>
+
+        Fix: When using align-items:center on a flex container in the column direction, the contents of flex item, if too big, will overflow their container in IE 10-11.
+
+        <flex style="height: 200px;width:300px;padding:20px;" align-items="center"
+              flex-direction="column" justify-content="center">
+            <flex-item flex="initial">
+                the content of box would not overflow this box
+            </flex-item>
+        </flex>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
+            gutter
+        </h2>
+        the gutter of vue-flex is 20 in below:
+        <flex gutter="20" flex-wrap="wrap">
+            <flex-item v-for="value in getList(6)" flex="30%">
+                <div class="doc-text">
+                    {{value+1}}
+                </div>
+            </flex-item>
+        </flex>
+        <flex gutter="20" flex-wrap="wrap" flex-direction="column">
+            <flex-item v-for="value in getList(3)">
+                <div class="doc-text">
+                    {{value+1}}
+                </div>
+            </flex-item>
+        </flex>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
             basic flex
         </h2>
         <flex>
@@ -269,26 +323,6 @@
     </div>
     <div class="doc-box">
         <h2 class="doc-title">
-            gutter
-        </h2>
-        gutter of vue-flex is 20:
-        <flex gutter="20" flex-wrap="wrap">
-            <flex-item v-for="value in getList(6)" flex="30%">
-                <div class="doc-text">
-                    {{value+1}}
-                </div>
-            </flex-item>
-        </flex>
-        <flex gutter="20" flex-wrap="wrap" flex-direction="column">
-            <flex-item v-for="value in getList(3)">
-                <div class="doc-text">
-                    {{value+1}}
-                </div>
-            </flex-item>
-        </flex>
-    </div>
-    <div class="doc-box">
-        <h2 class="doc-title">
             inline-flex
         </h2>
         <inline-flex>
@@ -296,40 +330,6 @@
                 {{value+1}}
             </flex-item>
         </inline-flex>
-    </div>
-    <div class="doc-box">
-        <h2 class="doc-title">
-            provide workarounds for cross-browser bug
-        </h2>
-
-        Fix: IE10-11, containers with display: flex and flex-direction: column will not properly calculate their flexed childrens' sizes if the container has min-height but no explicit height property
-
-        <flex style="min-height: 200px" flex-direction="column">
-            <flex-item v-for="index of getList(3)">
-                <div class="doc-text">
-                    {{index + 1}}
-                </div>
-            </flex-item>
-        </flex>
-
-        Fix: IE 11 does not vertically align items correctly when min-height is used
-
-        <flex style="min-height: 200px" align-items="center">
-            <flex-item v-for="index of getList(2)">
-                <div class="doc-text">
-                    {{index + 1}}
-                </div>
-            </flex-item>
-        </flex>
-
-        Fix: When using align-items:center on a flex container in the column direction, the contents of flex item, if too big, will overflow their container in IE 10-11.
-
-        <flex style="height: 200px;width:300px;padding:20px;" align-items="center"
-              flex-direction="column" justify-content="center">
-            <flex-item flex="initial">
-                the content of box would not overflow this box
-            </flex-item>
-        </flex>
     </div>
 </div>
 

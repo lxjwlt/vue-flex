@@ -70,10 +70,10 @@ var flex = {
             if (this.cGutter) {
                 var margin = -(this.cGutter / 2) + 'px';
                 return {
-                    'margin-left': margin,
-                    'margin-right': margin,
-                    'margin-top': margin,
-                    'margin-bottom': margin
+                    marginLeft: margin,
+                    marginRight: margin,
+                    marginTop: margin,
+                    marginBottom: margin
                 };
             }
         }
@@ -132,11 +132,13 @@ var inlineFlex = {
  */
 
 function isNumber (str) {
-    return str && str.match && str.match(/^\d+$/);
+    var m = str.match(/^[\d.\-+]+$/);
+    return m && !isNaN(m);
 }
 
 function isUnitNumber (str) {
-    return str && str.match && str.match(/^\d+[^\d]+$/);
+    var m = str.match(/^([\d.\-+]+)[^\s\d.\-+]+$/);
+    return m && !isNaN(m[1]);
 }
 
 function isEmptyCssValue (value) {
@@ -179,7 +181,7 @@ var flexItem = {
                 return 'vue-flex-item--align-self-' + this.alignSelf;
             }
         },
-        currentFlex: function () {
+        cFlex: function () {
             var value = String(this.flex).trim(),
                 arr = value.split(/\s+/g);
 
@@ -207,7 +209,7 @@ var flexItem = {
                 return '1 1 ' + value;
             }
 
-            if (arr.length === 2 && isUnitNumber(arr[1])) {
+            if (arr.length === 2 && (!isNumber(arr[0]) || !isNumber(arr[1]))) {
                 return arr[0] + ' 1 ' + arr[1];
             }
 
@@ -220,7 +222,7 @@ var flexItem = {
 
             return value;
         },
-        style: function () {
+        css: function () {
             var style = {},
                 parent = this.$parent;
 
@@ -229,11 +231,11 @@ var flexItem = {
                 style.order = this.order;
             }
 
-            if (this.currentFlex) {
-                style.flex = this.currentFlex;
+            if (this.cFlex) {
+                style.flex = this.cFlex;
             }
 
-            if (parent.cGutter) {
+            if (parent && parent.cGutter) {
                 style.marginTop = style.marginBottom =
                     style.marginLeft = style.marginRight =
                         (parent.cGutter / 2) + 'px';
@@ -244,7 +246,7 @@ var flexItem = {
     },
 
     watch: {
-        flex: function () {
+        cFlex: function () {
             this.__checkBoxSizingBug();
         }
     },
@@ -252,7 +254,7 @@ var flexItem = {
     render: function (createElem) {
         return createElem('div', {
             class: ['vue-flex-item', this.cls],
-            style: this.style
+            style: this.css
         }, [ this.$slots.default ]);
     },
 
@@ -270,7 +272,7 @@ var flexItem = {
                     return;
                 }
 
-                var arr = vm.currentFlex.split(/\s+/g);
+                var arr = vm.cFlex.split(/\s+/g);
 
                 if (arr[2] && arr[2] !== 'auto' && !isEmptyCssValue(arr[2]) &&
                     (hasPadding(style) || hasBorder(style))) {
