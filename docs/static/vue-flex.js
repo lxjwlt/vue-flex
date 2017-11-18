@@ -41,21 +41,12 @@ function fixName (name) {
 var flex = {
 
     props: {
-        flexDirection: {
-            type: String
-        },
-        flexWrap: {
-            type: String
-        },
-        justifyContent: {
-            type: String
-        },
-        alignItems: {
-            type: String
-        },
-        alignContent: {
-            type: String
-        }
+        flexDirection: String,
+        flexWrap: String,
+        justifyContent: String,
+        alignItems: String,
+        alignContent: String,
+        gutter: [String, Number]
     },
 
     computed: {
@@ -70,26 +61,41 @@ var flex = {
             }).map(function (name) {
                 return 'vue-flex--' + fixName(name) + '-' + vm[name];
             });
+        },
+        cGutter: function () {
+            return Number(this.gutter) || 0;
+        },
+        css: function () {
+            if (this.cGutter) {
+                var margin = -(this.cGutter / 2) + 'px';
+                return {
+                    'margin-left': margin,
+                    'margin-right': margin,
+                    'margin-top': margin,
+                    'margin-bottom': margin
+                };
+            }
         }
     },
 
     render: function (createElem) {
 
         /**
-         * Fix bugs of IE10-11 by nested flex wrapper and extra min-height-holder:
+         * Fix bugs of IE10-11 by nested flex wrapper and a extra min-height-holder:
          * 1. In IE 10-11, if min-height declarations on flex containers,
          *    their flex item children calculate size incorrectly.
          * 2. "align-content:center" doesn't work if "min-height" declarations on flex containers
          *    in column direction in IE 10-11
          */
         return createElem('div', {
-            'class': 'vue-flex'
+            class: 'vue-flex'
         }, [
             createElem('div', {
-                'class': ['vue-flex_inner', this.cls]
+                class: ['vue-flex_inner', this.cls],
+                style: this.css
             }, this.$slots.default),
             createElem('div', {
-                'class': 'vue-flex_min-height-holder'
+                class: 'vue-flex_min-height-holder'
             })
         ]);
     }
@@ -194,7 +200,8 @@ var flexItem = {
             return value;
         },
         style: function () {
-            var style = {};
+            var style = {},
+                parent = this.$parent;
 
             if (this.order || this.order === 0) {
                 style.msFlexOrder = this.order;
@@ -203,6 +210,12 @@ var flexItem = {
 
             if (this.currentFlex) {
                 style.flex = this.currentFlex;
+            }
+
+            if (parent.cGutter) {
+                style.marginTop = style.marginBottom =
+                    style.marginLeft = style.marginRight =
+                        (parent.cGutter / 2) + 'px';
             }
 
             return style;

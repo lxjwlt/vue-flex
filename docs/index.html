@@ -268,6 +268,26 @@
     </div>
     <div class="doc-box">
         <h2 class="doc-title">
+            gutter
+        </h2>
+        gutter of vue-flex is 20:
+        <flex gutter="20" flex-wrap="wrap">
+            <flex-item v-for="value in getList(6)" flex="30%">
+                <div class="doc-text">
+                    {{value}}
+                </div>
+            </flex-item>
+        </flex>
+        <flex gutter="20" flex-wrap="wrap" flex-direction="column">
+            <flex-item v-for="value in getList(3)">
+                <div class="doc-text">
+                    {{value}}
+                </div>
+            </flex-item>
+        </flex>
+    </div>
+    <div class="doc-box">
+        <h2 class="doc-title">
             provide workarounds for cross-browser bug
         </h2>
 
@@ -302,9 +322,11 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.3/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.3/dist/vue.js"></script>
 <script src="./static/vue-flex.js"></script>
 <script>
+    Vue.config.devtools = true;
+
     Vue.use(window['vue-flex']);
 
     new Vue({
