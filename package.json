@@ -1,6 +1,6 @@
 {
   "name": "@lxjwlt/vue-flex",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "vue components of flexbox fixing cross-browser bugs",
   "main": "dist/vue-flex.js",
   "scripts": {
