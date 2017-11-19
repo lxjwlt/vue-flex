@@ -1,5 +1,5 @@
 /**
- * vue-flex v0.0.1
+ * vue-flex v0.1.0
  * (c) 2017-present lxjwlt
  * Released under the MIT license
  * https://github.com/lxjwlt/vue-flex.git
