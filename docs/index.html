@@ -164,6 +164,14 @@
                 the content of box would not overflow this box
             </flex-item>
         </flex>
+
+        Fix: flex-basis doesn't support calc() in IE10-11
+
+        <flex justify-content="center">
+            <flex-item flex="0 0 calc(50%)">
+                1
+            </flex-item>
+        </flex>
     </div>
     <div class="doc-box">
         <h2 class="doc-title">
