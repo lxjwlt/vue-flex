@@ -25,19 +25,27 @@ function newApp (config) {
     return app;
 }
 
+function prefixCss (config) {
+    config.msFlexPositive = config.flexGrow;
+
+    config.msFlexNegative = config.flexShrink;
+
+    config.msFlexPreferredSize = config.flexBasis;
+
+    return config;
+}
+
 describe('vue-flex', () => {
     it('exports is no omission', function () {
         assert.ok(vueFlex.flex);
-        assert.ok(vueFlex.inlineFlex);
         assert.ok(vueFlex.flexItem);
         assert.ok(vueFlex.install);
-        assert.strictEqual(Object.keys(vueFlex).length, 4);
+        assert.strictEqual(Object.keys(vueFlex).length, 3);
     });
 
     it('install and register component successfully', function () {
         Vue.use(vueFlex);
         assert.ok(Vue.component('flex'));
-        assert.ok(Vue.component('inline-flex'));
         assert.ok(Vue.component('flex-item'));
     });
 
@@ -99,183 +107,183 @@ describe('vue-flex', () => {
             let flexboxComp = app.$refs.flex;
 
             flexComp.$props.flex = 'auto';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto'
-            });
+            }));
 
             flexComp.$props.flex = 'initial';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '0',
                 flexShrink: '1',
                 flexBasis: 'auto'
-            });
+            }));
 
             flexComp.$props.flex = 'none';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '0',
                 flexShrink: '0',
                 flexBasis: 'auto'
-            });
+            }));
 
             flexComp.$props.flex = '2';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '2',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '0%'
-            });
+            }));
 
             flexComp.$props.flex = '2.5';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '2.5',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '0%'
-            });
+            }));
 
             flexComp.$props.flex = '10px';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '10px'
-            });
+            }));
 
             flexComp.$props.flex = '10.05%';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '10.05%'
-            });
+            }));
 
             flexComp.$props.flex = '1 30%';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '30%'
-            });
+            }));
 
             flexComp.$props.flex = '1 auto';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto'
-            });
+            }));
 
             flexComp.$props.flex = '1 30px';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '30px'
-            });
+            }));
 
             flexComp.$props.flex = 'auto 1';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto'
-            });
+            }));
 
             flexComp.$props.flex = 'auto 10px';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '10px',
                 flexShrink: '1',
                 flexBasis: 'auto'
-            });
+            }));
 
             flexComp.$props.flex = '1 1 0';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '0px'
-            });
+            }));
 
             flexComp.$props.flex = '10px 1 0';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '0',
                 flexBasis: 'auto',
                 width: '10px'
-            });
+            }));
 
             flexComp.$props.flex = 0;
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '0',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '0%'
-            });
+            }));
 
             flexComp.$props.flex = 'inherit';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: 'inherit',
                 flexShrink: 'inherit',
                 flexBasis: 'inherit'
-            });
+            }));
 
             flexComp.$props.flex = 'unset';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: 'unset',
                 flexShrink: 'unset',
                 flexBasis: 'unset'
-            });
+            }));
 
             flexComp.$props.flex = 'max-content';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'max-content'
-            });
+            }));
 
             flexboxComp.$props.flexDirection = 'column';
             flexComp.$props.flex = '10px';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 height: '10px'
-            });
+            }));
             flexboxComp.$props.flexDirection = 'row';
 
             /**
              * error flex
              */
             flexComp.$props.flex = '';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '0%'
-            });
+            }));
 
             flexComp.$props.flex = '1 1 10px 1';
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '0%'
-            });
+            }));
 
             flexComp.$props.flex = true;
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'true'
-            });
+            }));
 
             flexComp.$props.flex = undefined;
-            assert.deepStrictEqual(flexComp.cFlex, {
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
                 flexBasis: 'auto',
                 width: '0%'
-            });
+            }));
         });
         it('margin from gutter', function () {
             Vue.use(vueFlex);

@@ -16,8 +16,7 @@ module.exports = {
         justifyContent: String,
         alignItems: String,
         alignContent: String,
-        gutter: [String, Number],
-        inline: 0
+        gutter: [String, Number]
     },
 
     computed: {
@@ -54,8 +53,6 @@ module.exports = {
 
     render: function (createElem) {
 
-        var cls = this.inline ? 'vue-inline-flex' : 'vue-flex';
-
         /**
          * Fix bugs of IE10-11 by nested flex wrapper and a extra min-height-holder:
          * - Fix flexbugs#3: "min-height" on a flex container won't apply to its flex items
@@ -63,10 +60,10 @@ module.exports = {
          *    in column direction in IE 10-11
          */
         return createElem('div', {
-            class: cls
+            class: 'vue-flex'
         }, [
             createElem('div', {
-                class: [cls + '_inner', this.cls],
+                class: ['vue-flex_inner', this.cls],
                 style: this.css
             }, this.$slots.default),
             createElem('div', {

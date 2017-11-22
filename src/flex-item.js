@@ -83,7 +83,7 @@ module.exports = {
              * fix flexbugs#7: flex-basis doesn't account for box-sizing:border-box
              * fix flexbugs#8: flex-basis doesn't support calc()
              */
-            if (!(parent && parent.inline) && arr[2].match(/\d/)) {
+            if (arr[2].match(/\d/)) {
                 obj[parent && parent.isColumn ? 'height' : 'width'] = arr[2];
                 arr[2] = 'auto';
             }
