@@ -7,33 +7,11 @@ function isNumber (str) {
     return m && !isNaN(m);
 }
 
-function isUnitNumber (str) {
-    var m = str.match(/^([\d.\-+]+)[^\s\d.\-+]+$/);
-    return m && !isNaN(m[1]);
+function splitStr (value) {
+    return value ? value.split(/\s+/g) : [];
 }
 
-function isEmptyCssValue (value) {
-    value = value.trim();
-    return !value || value === 'none' || parseInt(value, 10) === 0;
-}
-
-function hasPadding (style) {
-    return [
-        style.paddingLeft, style.paddingRight,
-        style.paddingTop, style.paddingBottom
-    ].some(function (value) {
-        return !isEmptyCssValue(value);
-    });
-}
-
-function hasBorder (style) {
-    return [
-        style.borderLeftWidth, style.borderRightWidth,
-        style.borderTopWidth, style.borderBottomWidth
-    ].some(function (value) {
-        return !isEmptyCssValue(value);
-    });
-}
+var defaultFlex = '1';
 
 module.exports = {
 
@@ -41,7 +19,7 @@ module.exports = {
         order: [Number, String],
         flex: {
             type: [Number, String],
-            'default': 1
+            'default': defaultFlex
         },
         alignSelf: String
     },
@@ -53,58 +31,84 @@ module.exports = {
             }
         },
         cFlex: function () {
-            var value = String(this.flex).trim(),
-                arr = value.split(/\s+/g);
+            var value = !this.flex && this.flex !== 0 ? defaultFlex : String(this.flex).trim(),
+                parent = this.$parent,
+                arr = splitStr(value),
+                len = arr.length,
+                obj = {},
+                i;
+
+            if (len > 3) {
+                arr = [defaultFlex];
+                len = 1;
+            }
+
+            for (i = len - 1; i >= 0; i--) {
+                if (!isNumber(arr[i])) {
+                    arr.push(arr.splice(i, 1)[0]);
+                }
+            }
+
+            value = arr.join(' ');
 
             /**
-             * Fix: default value of 'flex-shrink' property is "0" in Internet Explorer 10,
-             * so fix that value to "1" when `flex-shrink` is not defined.
+             * Fix flexbugs#6: The default flex value has changed
              */
             if (value === 'auto') {
-                return '1 1 auto';
+                value = '1 1 auto';
+            } else if (value === 'inherit') {
+                value = 'inherit inherit inherit';
+            } else if (value === 'unset') {
+                value = 'unset unset unset';
+            } else if (value === 'initial') {
+                value = '0 1 auto';
+            } else if (value === 'none') {
+                value = '0 0 auto';
+            } else if (len === 1) {
+                value = isNumber(value) ? value + ' 1 0%' : '1 1 ' + value;
+            } else if (len === 2) {
+                value = isNumber(arr[0]) && isNumber(arr[1]) ?
+                    value + ' 0%' : arr[0] + ' 1 ' + arr[1];
+            } else if (len === 3) {
+
+                /**
+                 * Fix flexbugs#4: flex shorthand declarations with unitless flex-basis values are ignored
+                 */
+                value = arr[2] === '0' ? [arr[0], arr[1], '0px'].join(' ') : value;
             }
 
-            if (value === 'initial') {
-                return '0 1 auto';
-            }
-
-            if (value === 'none') {
-                return '0 0 auto';
-            }
-
-            if (isNumber(value)) {
-                return value + ' 1 0%';
-            }
-
-            if (isUnitNumber(value)) {
-                return '1 1 ' + value;
-            }
-
-            if (arr.length === 2 && (!isNumber(arr[0]) || !isNumber(arr[1]))) {
-                return arr[0] + ' 1 ' + arr[1];
-            }
+            arr = splitStr(value);
 
             /**
-             * Fix: unitless `flex-basis` values are ignored in Internet Explorer 10-11
+             * fix flexbugs#7: flex-basis doesn't account for box-sizing:border-box
+             * fix flexbugs#8: flex-basis doesn't support calc()
              */
-            if (arr.length === 3 && arr[2] === '0') {
-                return [arr[0], arr[1], '0px'].join(' ');
+            if (!(parent && parent.inline) && arr[2].match(/\d/)) {
+                obj[parent && parent.isColumn ? 'height' : 'width'] = arr[2];
+                arr[2] = 'auto';
             }
 
-            return value;
+            obj.flexGrow = obj.msFlexPositive = arr[0];
+
+            obj.flexShrink = obj.msFlexNegative = arr[1];
+
+            obj.flexBasis = obj.msFlexPreferredSize = arr[2];
+
+            return obj;
         },
         css: function () {
             var style = {},
-                parent = this.$parent;
+                parent = this.$parent,
+                cFlex = this.cFlex;
 
             if (this.order || this.order === 0) {
                 style.msFlexOrder = this.order;
                 style.order = this.order;
             }
 
-            if (this.cFlex) {
-                style.flex = this.cFlex;
-            }
+            Object.keys(cFlex).forEach(function (key) {
+                style[key] = cFlex[key];
+            });
 
             if (parent && parent.cGutter) {
                 style.marginTop = style.marginBottom =
@@ -116,46 +120,11 @@ module.exports = {
         }
     },
 
-    watch: {
-        cFlex: function () {
-            this.__checkBoxSizingBug();
-        }
-    },
-
     render: function (createElem) {
         return createElem('div', {
             class: ['vue-flex-item', this.cls],
             style: this.css
         }, [ this.$slots.default ]);
-    },
-
-    mounted: function () {
-        this.__checkBoxSizingBug();
-    },
-
-    methods: {
-        __checkBoxSizingBug: function () {
-            var vm = this;
-            vm.$nextTick(function () {
-                var style = window.getComputedStyle(vm.$el);
-
-                if (style.boxSizing === 'content-box') {
-                    return;
-                }
-
-                var arr = vm.cFlex.split(/\s+/g);
-
-                if (arr[2] && arr[2] !== 'auto' && !isEmptyCssValue(arr[2]) &&
-                    (hasPadding(style) || hasBorder(style))) {
-                    throw(new Error([
-                        'It is not allowed to Apply "padding" or "border" to a flex item,',
-                        'when using "flex-basis" to determine its size.',
-                        'because IE 10-11 always assume a content box model in this case,',
-                        'even if that item is set to "box-sizing:border-box".'
-                    ].join(' ')));
-                }
-            });
-        }
     }
 
 };

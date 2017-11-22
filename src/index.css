@@ -114,16 +114,9 @@
 
 .vue-flex-item {
 
-    /*
-        Fix: default value of 'flex-shrink' property is '0' in IE10
-    */
-    flex: 1 1 0%;
-
-    /*
-        Fix: When using "align-items:center" on a flex container in the column direction,
-        the contents of flex item, if too big, will overflow their container in IE 10-11.
-    */
+    /* Fix flexbugs#2: Column flex items set to align-items:center overflow their container */
     max-width: 100%;
+
 }
 
 .vue-flex-item--align-self-auto {

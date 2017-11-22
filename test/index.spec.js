@@ -4,21 +4,25 @@ var assert = require('chai').assert;
 var Vue = require('vue/dist/vue');
 var vueFlex = require('../src/index');
 
+Vue.config.silent = true;
 Vue.config.productionTip = false;
 Vue.config.devtools = false;
 
 function comp (name, data) {
+    Vue.use(vueFlex);
     return (new (Vue.extend(Vue.component(name)))({
         propsData: data
     })).$mount();
 }
 
-function elem () {
-    let box = document.createElement('div');
+function newApp (config) {
+    Vue.use(vueFlex);
 
-    document.body.appendChild(box);
+    let app = new Vue(config);
 
-    return box;
+    app.$mount();
+
+    return app;
 }
 
 describe('vue-flex', () => {
@@ -87,87 +91,191 @@ describe('vue-flex', () => {
             assert.strictEqual(flexComp.cls, 'vue-flex-item--align-self-flex-end');
         });
         it('automate longhand of flex props', function () {
-            let flexComp = comp('flex-item', {
-                flex: 'auto'
+            let app = newApp({
+                template: '<flex ref="flex"><flex-item ref="flexItem"></flex-item></flex>'
             });
 
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '1 1 auto');
+            let flexComp = app.$refs.flexItem;
+            let flexboxComp = app.$refs.flex;
+
+            flexComp.$props.flex = 'auto';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto'
+            });
 
             flexComp.$props.flex = 'initial';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '0 1 auto');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '0',
+                flexShrink: '1',
+                flexBasis: 'auto'
+            });
 
             flexComp.$props.flex = 'none';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '0 0 auto');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '0',
+                flexShrink: '0',
+                flexBasis: 'auto'
+            });
 
             flexComp.$props.flex = '2';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '2 1 0%');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '2',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '0%'
+            });
 
             flexComp.$props.flex = '2.5';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '2.5 1 0%');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '2.5',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '0%'
+            });
 
             flexComp.$props.flex = '10px';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '1 1 10px');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '10px'
+            });
 
             flexComp.$props.flex = '10.05%';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '1 1 10.05%');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '10.05%'
+            });
 
             flexComp.$props.flex = '1 30%';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '1 1 30%');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '30%'
+            });
 
             flexComp.$props.flex = '1 auto';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '1 1 auto');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto'
+            });
 
             flexComp.$props.flex = '1 30px';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '1 1 30px');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '30px'
+            });
 
             flexComp.$props.flex = 'auto 1';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, 'auto 1 1');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto'
+            });
 
             flexComp.$props.flex = 'auto 10px';
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, 'auto 1 10px');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '10px',
+                flexShrink: '1',
+                flexBasis: 'auto'
+            });
 
             flexComp.$props.flex = '1 1 0';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '0px'
+            });
 
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '1 1 0px');
+            flexComp.$props.flex = '10px 1 0';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '0',
+                flexBasis: 'auto',
+                width: '10px'
+            });
 
             flexComp.$props.flex = 0;
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '0',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '0%'
+            });
 
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 3);
-            assert.strictEqual(flexComp.cFlex, '0 1 0%');
+            flexComp.$props.flex = 'inherit';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: 'inherit',
+                flexShrink: 'inherit',
+                flexBasis: 'inherit'
+            });
+
+            flexComp.$props.flex = 'unset';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: 'unset',
+                flexShrink: 'unset',
+                flexBasis: 'unset'
+            });
+
+            flexComp.$props.flex = 'max-content';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'max-content'
+            });
+
+            flexboxComp.$props.flexDirection = 'column';
+            flexComp.$props.flex = '10px';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                height: '10px'
+            });
+            flexboxComp.$props.flexDirection = 'row';
+
+            /**
+             * error flex
+             */
+            flexComp.$props.flex = '';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '0%'
+            });
+
+            flexComp.$props.flex = '1 1 10px 1';
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '0%'
+            });
 
             flexComp.$props.flex = true;
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 1);
-            assert.strictEqual(flexComp.cFlex, 'true');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'true'
+            });
 
             flexComp.$props.flex = undefined;
-
-            assert.strictEqual(flexComp.cFlex.split(/\s+/g).length, 1);
-            assert.strictEqual(flexComp.cFlex, 'undefined');
+            assert.deepStrictEqual(flexComp.cFlex, {
+                flexGrow: '1',
+                flexShrink: '1',
+                flexBasis: 'auto',
+                width: '0%'
+            });
         });
         it('margin from gutter', function () {
             Vue.use(vueFlex);
@@ -183,62 +291,6 @@ describe('vue-flex', () => {
                 marginLeft: '15px',
                 marginRight: '15px'
             });
-        });
-        it('padding error', function (done) {
-            Vue.use(vueFlex);
-            let app = new Vue({
-                template: '<flex-item style="padding:10px;box-sizing:border-box;" flex="30%"></flex-item>',
-                errorCaptured () {
-                    done();
-                    return false;
-                }
-            });
-
-            app.$mount(elem());
-        });
-
-        it('no error while box-sizing was content-box', function (done) {
-            let isError = false;
-
-            Vue.use(vueFlex);
-
-            let app = new Vue({
-                template: '<flex-item style="padding:10px;" flex="30%"></flex-item>',
-                errorCaptured () {
-                    isError = true;
-                    return false;
-                }
-            });
-
-            app.$mount(elem());
-
-            setTimeout(() => {
-                if (isError) {
-                    assert.ifError(new Error('should not be error'));
-                }
-                done();
-            }, 1000);
-        });
-
-        it('error while flex is being set to explicit value', function (done) {
-            Vue.use(vueFlex);
-
-            let app = new Vue({
-                template: '<flex-item style="border: 1px solid;box-sizing:border-box;" :flex="flex"></flex-item>',
-                data: {
-                    flex: 'initial'
-                },
-                errorCaptured () {
-                    done();
-                    return false;
-                }
-            });
-
-            app.$mount(elem());
-
-            setTimeout(() => {
-                app.flex = '10px';
-            }, 1000);
         });
     });
 });

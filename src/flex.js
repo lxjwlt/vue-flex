@@ -33,6 +33,9 @@ module.exports = {
                 return 'vue-flex--' + fixName(name) + '-' + vm[name];
             });
         },
+        isColumn: function () {
+            return ['column', 'column-reverse'].indexOf(this.flexDirection) >= 0;
+        },
         cGutter: function () {
             return Number(this.gutter) || 0;
         },
@@ -55,9 +58,8 @@ module.exports = {
 
         /**
          * Fix bugs of IE10-11 by nested flex wrapper and a extra min-height-holder:
-         * 1. In IE 10-11, if min-height declarations on flex containers,
-         *    their flex item children calculate size incorrectly.
-         * 2. "align-content:center" doesn't work if "min-height" declarations on flex containers
+         * - Fix flexbugs#3: "min-height" on a flex container won't apply to its flex items
+         * - "align-content:center" doesn't work if "min-height" declarations on flex containers
          *    in column direction in IE 10-11
          */
         return createElem('div', {
