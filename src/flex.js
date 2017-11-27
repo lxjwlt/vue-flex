@@ -40,12 +40,8 @@ module.exports = {
         },
         css: function () {
             if (this.cGutter) {
-                var margin = -(this.cGutter / 2) + 'px';
                 return {
-                    marginLeft: margin,
-                    marginRight: margin,
-                    marginTop: margin,
-                    marginBottom: margin
+                    margin: -(this.cGutter / 2) + 'px'
                 };
             }
         }

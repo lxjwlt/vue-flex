@@ -30,6 +30,9 @@ module.exports = {
                 return 'vue-flex-item--align-self-' + this.alignSelf;
             }
         },
+        gutter: function () {
+            return this.$parent && this.$parent.cGutter || 0;
+        },
         cFlex: function () {
             var value = !this.flex && this.flex !== 0 ? defaultFlex : String(this.flex).trim(),
                 parent = this.$parent,
@@ -83,7 +86,7 @@ module.exports = {
              * fix flexbugs#7: flex-basis doesn't account for box-sizing:border-box
              * fix flexbugs#8: flex-basis doesn't support calc()
              */
-            if (arr[2].match(/\d/)) {
+            if (arr[2] !== 'content') {
                 obj[parent && parent.isColumn ? 'height' : 'width'] = arr[2];
                 arr[2] = 'auto';
             }
@@ -98,7 +101,6 @@ module.exports = {
         },
         css: function () {
             var style = {},
-                parent = this.$parent,
                 cFlex = this.cFlex;
 
             if (this.order || this.order === 0) {
@@ -110,10 +112,8 @@ module.exports = {
                 style[key] = cFlex[key];
             });
 
-            if (parent && parent.cGutter) {
-                style.marginTop = style.marginBottom =
-                    style.marginLeft = style.marginRight =
-                        (parent.cGutter / 2) + 'px';
+            if (this.gutter) {
+                style.margin = (this.gutter / 2) + 'px';
             }
 
             return style;
