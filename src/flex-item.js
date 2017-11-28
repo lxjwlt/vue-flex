@@ -2,6 +2,10 @@
  * @file flex-item component
  */
 
+var ResizeSensor = require('./lib/resize-sensor'),
+    util = require('./lib/util'),
+    defaultFlex = '1';
+
 function isNumber (str) {
     var m = str.match(/^[\d.\-+]+$/);
     return m && !isNaN(m);
@@ -10,8 +14,6 @@ function isNumber (str) {
 function splitStr (value) {
     return value ? value.split(/\s+/g) : [];
 }
-
-var defaultFlex = '1';
 
 module.exports = {
 
@@ -22,6 +24,13 @@ module.exports = {
             'default': defaultFlex
         },
         alignSelf: String
+    },
+
+    data: function () {
+        return {
+            width: 0,
+            height: 0
+        };
     },
 
     computed: {
@@ -35,7 +44,6 @@ module.exports = {
         },
         cFlex: function () {
             var value = !this.flex && this.flex !== 0 ? defaultFlex : String(this.flex).trim(),
-                parent = this.$parent,
                 arr = splitStr(value),
                 len = arr.length,
                 obj = {},
@@ -82,15 +90,6 @@ module.exports = {
 
             arr = splitStr(value);
 
-            /**
-             * fix flexbugs#7: flex-basis doesn't account for box-sizing:border-box
-             * fix flexbugs#8: flex-basis doesn't support calc()
-             */
-            if (arr[2] !== 'content') {
-                obj[parent && parent.isColumn ? 'height' : 'width'] = arr[2];
-                arr[2] = 'auto';
-            }
-
             obj.flexGrow = obj.msFlexPositive = arr[0];
 
             obj.flexShrink = obj.msFlexNegative = arr[1];
@@ -112,6 +111,9 @@ module.exports = {
                 style[key] = cFlex[key];
             });
 
+            style.flexBasis = style.msFlexPreferredSize =
+                (this.$parent.isColumn ? this.height : this.width) + 'px';
+
             if (this.gutter) {
                 style.margin = (this.gutter / 2) + 'px';
             }
@@ -120,11 +122,67 @@ module.exports = {
         }
     },
 
+    watch: {
+        'cFlex.flexBasis': function () {
+            this.__updateSensor();
+        }
+    },
+
     render: function (createElem) {
         return createElem('div', {
             class: ['vue-flex-item', this.cls],
             style: this.css
         }, [ this.$slots.default ]);
+    },
+
+    mounted: function () {
+        this.__updateSensor();
+    },
+
+    methods: {
+
+        /**
+         * fix flexbugs#7: flex-basis doesn't account for box-sizing:border-box
+         * fix flexbugs#8: flex-basis doesn't support calc()
+         */
+        __updateSensor: function () {
+            var vm = this,
+                sensor = vm.sensor;
+
+            if (!sensor) {
+                sensor = vm.sensor = document.createElement('div');
+
+                util.css(sensor, {
+                    position: 'absolute',
+                    'z-index': -999,
+                    visibility: 'hidden',
+                    opacity: 0,
+                    width: vm.cFlex.flexBasis,
+                    height: vm.cFlex.flexBasis
+                });
+
+                this.$parent.$refs.inner.appendChild(sensor);
+
+                new ResizeSensor(sensor, function () {
+                    vm.width = sensor.offsetWidth;
+                    vm.height = sensor.offsetHeight;
+                });
+
+                vm.width = sensor.offsetWidth;
+                vm.height = sensor.offsetHeight;
+            } else {
+                util.css(sensor, {
+                    width: vm.cFlex.flexBasis,
+                    height: vm.cFlex.flexBasis
+                });
+            }
+        }
+
+    },
+    beforeDestroy: function () {
+        if (this.sensor) {
+            this.sensor.parentNode.removeChild(this.sensor);
+        }
     }
 
 };

@@ -60,7 +60,8 @@ module.exports = {
         }, [
             createElem('div', {
                 class: ['vue-flex_inner', this.cls],
-                style: this.css
+                style: this.css,
+                ref: 'inner'
             }, this.$slots.default),
             createElem('div', {
                 class: 'vue-flex_min-height-holder'
