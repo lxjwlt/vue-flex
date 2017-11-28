@@ -21,7 +21,8 @@ module.exports = {
     output: {
         file: `${targetDir}/${name}${isMin ? '.min' : ''}.js`,
         format: 'umd',
-        name: 'vue-flex'
+        name: 'vue-flex',
+        sourcemap: isDoc ? 'inline' : false
     },
     plugins: d([
         require('rollup-plugin-commonjs')(),
