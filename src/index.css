@@ -113,6 +113,7 @@
     /* Fix flexbugs#2: Column flex items set to align-items:center overflow their container */
     max-width: 100%;
 
+    transition: padding .001s, border .001s;
 }
 
 .vue-flex-item--align-self-auto {

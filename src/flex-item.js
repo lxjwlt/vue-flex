@@ -26,6 +26,19 @@ function splitStr (value) {
     }).join('').split(/:+/g);
 }
 
+function throttle (callback) {
+    var timeID = 0;
+
+    return function () {
+        if (!timeID) {
+            timeID = requestAnimationFrame(function () {
+                timeID = 0;
+                callback();
+            });
+        }
+    };
+}
+
 module.exports = {
 
     props: {
@@ -40,7 +53,15 @@ module.exports = {
     data: function () {
         return {
             width: 0,
-            height: 0
+            height: 0,
+            'padding-left': '0px',
+            'padding-right': '0px',
+            'padding-bottom': '0px',
+            'padding-top': '0px',
+            'border-left-width': '0px',
+            'border-right-width': '0px',
+            'border-bottom-width': '0px',
+            'border-top-width': '0px'
         };
     },
 
@@ -133,11 +154,32 @@ module.exports = {
             }
 
             return style;
+        },
+        sensorWidth: function () {
+            return 'calc(' + [
+                this.cFlex.flexBasis,
+                this['padding-left'],
+                this['padding-right'],
+                this['border-left-width'],
+                this['border-right-width']
+            ].join(' - ') + ')';
+        },
+        sensorHeight: function () {
+            return 'calc(' + [
+                this.cFlex.flexBasis,
+                this['padding-top'],
+                this['padding-bottom'],
+                this['border-left-top'],
+                this['border-right-bottom']
+            ].join(' - ') + ')';
         }
     },
 
     watch: {
-        'cFlex.flexBasis': function () {
+        sensorWidth: function () {
+            this.__updateSensor();
+        },
+        sensorHeight: function () {
             this.__updateSensor();
         }
     },
@@ -150,7 +192,13 @@ module.exports = {
     },
 
     mounted: function () {
-        this.__updateSensor();
+        var vm = this;
+
+        vm.__updateSensor();
+
+        vm.$el.addEventListener('transitionend', throttle(vm.__updateBox));
+
+        vm.__updateBox();
     },
 
     methods: {
@@ -171,11 +219,11 @@ module.exports = {
                     'z-index': -999,
                     visibility: 'hidden',
                     opacity: 0,
-                    width: vm.cFlex.flexBasis,
-                    height: vm.cFlex.flexBasis
+                    width: vm.sensorWidth,
+                    height: vm.sensorHeight
                 });
 
-                this.$parent.$refs.inner.appendChild(sensor);
+                vm.$parent.$refs.inner.appendChild(sensor);
 
                 new ResizeSensor(sensor, function () {
                     vm.width = sensor.offsetWidth;
@@ -186,10 +234,21 @@ module.exports = {
                 vm.height = sensor.offsetHeight;
             } else {
                 util.css(sensor, {
-                    width: vm.cFlex.flexBasis,
-                    height: vm.cFlex.flexBasis
+                    width: vm.sensorWidth,
+                    height: vm.sensorHeight
                 });
             }
+        },
+
+        __updateBox: function () {
+            var vm = this,
+                style = getComputedStyle(vm.$el);
+
+            Object.keys(vm.$data).forEach(function (name) {
+                if (name.match(/^(padding|border)/)) {
+                    vm[name] = style[name];
+                }
+            });
         }
 
     },
