@@ -10,5 +10,12 @@ module.exports = {
             list.push(name + ':' + config[name] + (important === 0 ? '' : '!important'));
         });
         return list.join(';');
-    }
+    },
+
+    /**
+     * IE6 - IE11
+     */
+    oldIE: window.VUE_FLEX_NOT_LIMIT_BROWSER ||
+        navigator.userAgent.indexOf('MSIE') !== -1 ||
+        navigator.appVersion.indexOf('Trident/') > 0
 };
