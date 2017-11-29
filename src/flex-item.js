@@ -12,7 +12,18 @@ function isNumber (str) {
 }
 
 function splitStr (value) {
-    return value ? value.split(/\s+/g) : [];
+    var arr = value.trim().split(''),
+        count = 0;
+
+    return arr.map(function (char) {
+        if (char === '(') {
+            count += 1;
+        } else if (char === ')') {
+            count -= 1;
+        }
+
+        return !count && char === ' ' ? ':' : char;
+    }).join('').split(/:+/g);
 }
 
 module.exports = {
@@ -41,6 +52,9 @@ module.exports = {
         },
         gutter: function () {
             return this.$parent && this.$parent.cGutter || 0;
+        },
+        isColumn: function () {
+            return this.$parent && this.$parent.isColumn;
         },
         cFlex: function () {
             var value = !this.flex && this.flex !== 0 ? defaultFlex : String(this.flex).trim(),
@@ -112,7 +126,7 @@ module.exports = {
             });
 
             style.flexBasis = style.msFlexPreferredSize =
-                (this.$parent.isColumn ? this.height : this.width) + 'px';
+                (this.isColumn ? this.height : this.width) + 'px';
 
             if (this.gutter) {
                 style.margin = (this.gutter / 2) + 'px';

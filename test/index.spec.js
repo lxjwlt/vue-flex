@@ -72,10 +72,7 @@ describe('vue-flex', () => {
             });
 
             assert.include(flexComp.css, {
-                marginLeft: '-5px',
-                marginRight: '-5px',
-                marginTop: '-5px',
-                marginBottom: '-5px',
+                margin: '-5px'
             });
         });
     });
@@ -98,7 +95,7 @@ describe('vue-flex', () => {
 
             assert.strictEqual(flexComp.cls, 'vue-flex-item--align-self-flex-end');
         });
-        it('automate longhand of flex props', function () {
+        it.only('automate longhand of flex props', function () {
             let app = newApp({
                 template: '<flex ref="flex"><flex-item ref="flexItem"></flex-item></flex>'
             });
@@ -131,40 +128,35 @@ describe('vue-flex', () => {
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '2',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '0%'
+                flexBasis: '0%'
             }));
 
             flexComp.$props.flex = '2.5';
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '2.5',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '0%'
+                flexBasis: '0%'
             }));
 
             flexComp.$props.flex = '10px';
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '10px'
+                flexBasis: '10px'
             }));
 
             flexComp.$props.flex = '10.05%';
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '10.05%'
+                flexBasis: '10.05%'
             }));
 
             flexComp.$props.flex = '1 30%';
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '30%'
+                flexBasis: '30%'
             }));
 
             flexComp.$props.flex = '1 auto';
@@ -178,8 +170,7 @@ describe('vue-flex', () => {
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '30px'
+                flexBasis: '30px'
             }));
 
             flexComp.$props.flex = 'auto 1';
@@ -200,24 +191,21 @@ describe('vue-flex', () => {
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '0px'
+                flexBasis: '0px'
             }));
 
             flexComp.$props.flex = '10px 1 0';
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '0',
-                flexBasis: 'auto',
-                width: '10px'
+                flexBasis: '10px'
             }));
 
             flexComp.$props.flex = 0;
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '0',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '0%'
+                flexBasis: '0%'
             }));
 
             flexComp.$props.flex = 'inherit';
@@ -241,13 +229,26 @@ describe('vue-flex', () => {
                 flexBasis: 'max-content'
             }));
 
+            flexComp.$props.flex = 'calc(100px - 20px) 1 22';
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
+                flexGrow: '1',
+                flexShrink: '22',
+                flexBasis: 'calc(100px - 20px)'
+            }));
+
+            flexComp.$props.flex = '1 2 calc(calc(50% + 10px) - 20px)';
+            assert.deepStrictEqual(flexComp.cFlex, prefixCss({
+                flexGrow: '1',
+                flexShrink: '2',
+                flexBasis: 'calc(calc(50% + 10px) - 20px)'
+            }));
+
             flexboxComp.$props.flexDirection = 'column';
             flexComp.$props.flex = '10px';
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                height: '10px'
+                flexBasis: '10px'
             }));
             flexboxComp.$props.flexDirection = 'row';
 
@@ -258,16 +259,14 @@ describe('vue-flex', () => {
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '0%'
+                flexBasis: '0%'
             }));
 
             flexComp.$props.flex = '1 1 10px 1';
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '0%'
+                flexBasis: '0%'
             }));
 
             flexComp.$props.flex = true;
@@ -281,8 +280,7 @@ describe('vue-flex', () => {
             assert.deepStrictEqual(flexComp.cFlex, prefixCss({
                 flexGrow: '1',
                 flexShrink: '1',
-                flexBasis: 'auto',
-                width: '0%'
+                flexBasis: '0%'
             }));
         });
         it('margin from gutter', function () {
@@ -294,10 +292,7 @@ describe('vue-flex', () => {
             app.$mount();
 
             assert.include(app.$refs.item.css, {
-                marginTop: '15px',
-                marginBottom: '15px',
-                marginLeft: '15px',
-                marginRight: '15px'
+                margin: '15px'
             });
         });
     });
