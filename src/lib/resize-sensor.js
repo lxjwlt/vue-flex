@@ -15,10 +15,10 @@ module.exports = function (element, callback) {
         position: 'absolute',
         left: 0,
         top: 0,
-        right: 0,
-        bottom: 0,
+        right: '-10px',
+        bottom: '-10px',
         overflow: 'hidden',
-        'z-index': -999,
+        'z-index': -1,
         visibility: 'hidden'
     });
 
