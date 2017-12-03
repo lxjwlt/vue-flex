@@ -13,10 +13,10 @@ module.exports = function (element, callback) {
 
     var style = util.cssText({
         position: 'absolute',
-        left: 0,
-        top: 0,
-        right: '-10px',
-        bottom: '-10px',
+        left: '-10px',
+        top: '-10px',
+        right: 0,
+        bottom: 0,
         overflow: 'hidden',
         'z-index': -1,
         visibility: 'hidden'
