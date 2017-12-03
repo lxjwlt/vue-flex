@@ -2,13 +2,16 @@
  * @file flex component
  */
 
+var ResizeSensor = require('./lib/resize-sensor'),
+    util = require('./lib/util');
+
 function fixName (name) {
     return name.replace(/[A-Z]/g, function (value) {
         return '-' + value.toLowerCase();
     });
 }
 
-module.exports = {
+var base = {
 
     props: {
         flexDirection: String,
@@ -70,3 +73,78 @@ module.exports = {
     }
 
 };
+
+var ieComponent = {
+
+    mixins: [base],
+
+    data: function () {
+        return {
+            width: 0
+        };
+    },
+    computed: {
+        flexes: function () {
+            var map = this.$children.reduce(function (map, child) {
+                map.grow.push(child.cFlex.flexGrow);
+                map.shrink.push(child.cFlex.flexShrink);
+                map.basis.push(child.realFlexBasis);
+                map.growSum += child.cFlex.flexGrow;
+                map.basisSum += child.realFlexBasis;
+                map.shrinkSum += child.cFlex.flexShrink * child.realFlexBasis;
+                return map;
+            }, {
+                width: [],
+                grow: [],
+                shrink: [],
+                basis: [],
+                basisSum: 0,
+                growSum: 0,
+                shrinkSum: 0
+            });
+
+            var del = this.width - map.basisSum;
+
+            if (del >= 0) {
+                if (map.growSum) {
+                    map.grow.forEach(function (grow, i) {
+                        map.width[i] = map.basis[i] + del * grow / map.growSum;
+                    })
+                } else {
+                    map.width = map.basis;
+                }
+
+            } else {
+                if (map.growSum) {
+                    map.shrink.forEach(function (shrink, i) {
+                        map.width[i] = map.basis[i] - del * map.basis[i] * shrink / map.shrinkSum;
+                    });
+                } else {
+                    map.width = map.basis;
+                }
+
+            }
+
+            return map;
+        }
+    },
+
+    mounted: function () {
+        var vm = this;
+
+        this.sensor = new ResizeSensor(vm.$el, function () {
+
+            if (vm.$el.offsetWidth > vm.width) {
+                vm.$children.forEach(function (child, i) {
+                    child.$emit('recalculation', vm.flexes.width[i]);
+                });
+            }
+
+            vm.width = vm.$el.offsetWidth;
+        });
+
+        vm.width = vm.$el.offsetWidth;
+    }
+};
+
+module.exports = util.oldIE ? ieComponent : base;

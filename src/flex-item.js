@@ -41,8 +41,6 @@ function throttle (callback) {
 
 var base = {
 
-    mixins: util.oldIE ? [ieMixin] : [],
-
     props: {
         order: [Number, String],
         flex: {
@@ -112,9 +110,9 @@ var base = {
 
             arr = splitStr(value);
 
-            obj.flexGrow = obj.msFlexPositive = arr[0];
+            obj.flexGrow = obj.msFlexPositive = Number(arr[0]) || 0;
 
-            obj.flexShrink = obj.msFlexNegative = arr[1];
+            obj.flexShrink = obj.msFlexNegative = Number(arr[1]) || 0;
 
             obj.flexBasis = obj.msFlexPreferredSize = arr[2];
 
@@ -132,11 +130,6 @@ var base = {
             Object.keys(cFlex).forEach(function (key) {
                 style[key] = cFlex[key];
             });
-
-            if (util.oldIE) {
-                style.flexBasis = style.msFlexPreferredSize =
-                    (this.isColumn ? this.height : this.width) + 'px';
-            }
 
             if (this.gutter) {
                 style.margin = (this.gutter / 2) + 'px';
@@ -163,6 +156,8 @@ var ieComponent = {
         return {
             width: 0,
             height: 0,
+            spill: false,
+            contentWidth: 0,
             'padding-left': '0px',
             'padding-right': '0px',
             'padding-bottom': '0px',
@@ -189,9 +184,24 @@ var ieComponent = {
                 this.cFlex.flexBasis,
                 this['padding-top'],
                 this['padding-bottom'],
-                this['border-left-top'],
-                this['border-right-bottom']
+                this['border-top-width'],
+                this['border-bottom-width']
             ].join(' - ') + ')';
+        },
+        ieCss: function () {
+            var obj = util.assign({}, this.css);
+
+            if (this.spill) {
+                obj.minWidth = obj.maxWidth = this.contentWidth;
+            }
+
+            obj.flexBasis = obj.msFlexPreferredSize =
+                (this.isColumn ? this.height : this.width) + 'px';
+
+            return obj;
+        },
+        realFlexBasis: function () {
+            return this.spill ? this.contentWidth : this.width;
         }
     },
 
@@ -204,6 +214,18 @@ var ieComponent = {
         }
     },
 
+    render: function (createElem) {
+        return createElem('div', {
+            class: ['vue-flex-item', this.cls],
+            style: this.ieCss
+        }, [
+            createElem('div', {
+                class: 'vue-flex-item_inner',
+                ref: 'inner'
+            }, [ this.$slots.default ])
+        ]);
+    },
+
     mounted: function () {
         var vm = this;
 
@@ -212,6 +234,26 @@ var ieComponent = {
         vm.$el.addEventListener('transitionend', throttle(vm.__updateBox));
 
         vm.__updateBox();
+
+        function calculation () {
+            vm.contentWidth = vm.$refs.inner.offsetWidth;
+
+            if (vm.$el.offsetWidth < vm.contentWidth) {
+                vm.spill = true;
+            }
+        }
+
+        new ResizeSensor([this.$refs.inner, this.$el], function () {
+            calculation();
+        });
+
+        calculation();
+
+        vm.$on('recalculation', function (width) {
+            if (width > vm.contentWidth) {
+                vm.spill = false;
+            }
+        });
     },
 
     methods: {

@@ -114,6 +114,10 @@
     max-width: 100%;
 
     transition: padding .001s, border .001s;
+
+    display: -ms-grid;
+    -ms-grid-columns: minmax(min-content, 100%);
+    -ms-grid-rows: minmax(min-content, 100%);
 }
 
 .vue-flex-item--align-self-auto {
