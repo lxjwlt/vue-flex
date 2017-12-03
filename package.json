@@ -6,7 +6,7 @@
   "scripts": {
     "test": "karma start test/karma.dev.config.js --single-run",
     "dev": "karma start test/karma.dev.config.js",
-    "build": "rollup -c && NODE_ENV=min rollup -c && NODE_ENV=doc rollup -c",
+    "build": "rollup -c && cross-env NODE_ENV=min rollup -c && cross-env NODE_ENV=doc rollup -c",
     "publish": "npm publish --access public",
     "server": "node server.js"
   },
@@ -33,6 +33,7 @@
   "devDependencies": {
     "autoprefixer": "^7.1.6",
     "chai": "^4.1.2",
+    "cross-env": "^5.1.1",
     "cssnano": "^3.10.0",
     "express": "^4.16.2",
     "karma": "^1.7.1",
