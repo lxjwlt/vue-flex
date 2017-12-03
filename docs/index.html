@@ -23,7 +23,8 @@
             background-color: #f9fafc;
         }
 
-        .vue-flex-item {
+        .vue-flex-item,
+        .color-box {
             min-height: 35px;
             border-radius: 4px;
             background-color: #d3dce6;
@@ -32,8 +33,17 @@
             position: relative;
         }
 
-        .vue-flex-item:nth-child(2n) {
+        .color-box {
+            width: 100%;
+        }
+
+        .vue-flex-item:nth-child(2n),
+        .vue-flex-item:nth-child(2n) .color-box {
             background-color: #e5e9f2;
+        }
+
+        .vue-flex-item.no-color {
+            background-color: rgba(0,0,0,0);
         }
 
         .doc-text {
@@ -179,17 +189,13 @@
         </h2>
         the gutter of vue-flex is 20 in below:
         <flex gutter="20" flex-wrap="wrap">
-            <flex-item v-for="value in getList(6)" flex="30%">
-                <div class="doc-text">
-                    {{value+1}}
-                </div>
+            <flex-item v-for="value in getList(8)" flex="calc(25% - 20px)" class="no-color">
+                <div class="color-box"></div>
             </flex-item>
         </flex>
-        <flex gutter="20" flex-wrap="wrap" flex-direction="column" style="height: 220px;">
-            <flex-item v-for="value in getList(4)" flex="0 0 100px">
-                <div class="doc-text">
-                    {{value+1}}
-                </div>
+        <flex gutter="20" flex-wrap="wrap" flex-direction="column" style="height: 180px;">
+            <flex-item v-for="value in getList(4)" flex="50%" class="no-color">
+                <div class="color-box" style="height: 100%"></div>
             </flex-item>
         </flex>
     </div>
