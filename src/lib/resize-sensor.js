@@ -1,6 +1,16 @@
 var util = require('./util');
 
-module.exports = function (element, callback) {
+module.exports = function (list, callback) {
+    if (!list.hasOwnProperty('length')) {
+        list = [list];
+    }
+    list.forEach(function (element) {
+        bindSensor(element, callback);
+    });
+};
+
+
+function bindSensor (element, callback) {
 
     if (element.__resizeQueue) {
         element.__resizeQueue.push(callback)
