@@ -199,9 +199,6 @@ var ieComponent = {
                 (this.isColumn ? this.height : this.width) + 'px';
 
             return obj;
-        },
-        realFlexBasis: function () {
-            return this.spill ? this.contentWidth : this.width;
         }
     },
 

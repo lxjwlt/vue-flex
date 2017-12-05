@@ -86,12 +86,13 @@ var ieComponent = {
     computed: {
         flexes: function () {
             var map = this.$children.reduce(function (map, child) {
+                var basis = child.width;
                 map.grow.push(child.cFlex.flexGrow);
                 map.shrink.push(child.cFlex.flexShrink);
-                map.basis.push(child.realFlexBasis);
+                map.basis.push(basis);
                 map.growSum += child.cFlex.flexGrow;
-                map.basisSum += child.realFlexBasis;
-                map.shrinkSum += child.cFlex.flexShrink * child.realFlexBasis;
+                map.basisSum += basis;
+                map.shrinkSum += child.cFlex.flexShrink * basis;
                 return map;
             }, {
                 width: [],
