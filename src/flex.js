@@ -11,6 +11,29 @@ function fixName (name) {
     });
 }
 
+function getUltimates (arr, func, isMax) {
+    var match = [],
+        ultimate = isMax ? -Infinity : Infinity;
+
+    if (typeof arr === 'number') {
+        arr = Array.apply(null, Array(arr)).map(function (v, i) {
+            return i;
+        });
+    }
+
+    arr.forEach(function (item, i) {
+        var value = func(item, i);
+        if (isMax && value > ultimate || !isMax && value < ultimate) {
+            match = [item];
+            ultimate = value;
+        } else if (value === ultimate) {
+            match.push(item);
+        }
+    });
+
+    return match;
+}
+
 var base = {
 
     props: {
@@ -80,128 +103,105 @@ var ieComponent = {
 
     data: function () {
         return {
-            width: 0
+            width: 0,
+            height: 0
         };
     },
     computed: {
-        flexes: function () {
-            var allSpill = true;
-            var map = this.$children.reduce(function (map, child) {
-                var basis = child.width;
-                map.grow.push(child.cFlex.flexGrow);
-                map.shrink.push(child.cFlex.flexShrink);
-                map.basis.push(basis);
-                map.spill.push(child.spill);
-                map.contentWidth.push(child.contentWidth);
+        resets: function () {
+            var isColumn = this.isColumn,
+                containerSize = isColumn ? this.height : this.width,
+                noSpillIndex = -1,
+                grow = [], shrink = [], basis = [], contentSize = [],
+                staticSize = 0, growSum = 0, basisSum = 0, shrinkSum = 0,
+                match, del, isGrow, radio;
 
-                map.growSum += child.cFlex.flexGrow;
-                map.basisSum += basis;
-                map.shrinkSum += child.cFlex.flexShrink * basis;
+            this.$children.forEach(function (child, i) {
+                var basisSize = isColumn ? child.height : child.width,
+                    childContentSize = isColumn ? child.contentHeight : child.contentWidth;
+
+                grow.push(child.cFlex.flexGrow);
+                shrink.push(child.cFlex.flexShrink);
+                basis.push(basisSize);
+                contentSize.push(childContentSize);
+
+                growSum += child.cFlex.flexGrow;
+                basisSum += basisSize;
+                shrinkSum += child.cFlex.flexShrink * basisSize;
 
                 if (child.spill) {
-                    map.staticWidth += child.contentWidth;
+                    staticSize += childContentSize;
                 } else {
-                    allSpill = false;
+                    noSpillIndex = i;
                 }
-
-                return map;
-            }, {
-                width: [],
-                grow: [],
-                shrink: [],
-                basis: [],
-                spill: [],
-                contentWidth: [],
-                basisSum: 0,
-                growSum: 0,
-                shrinkSum: 0,
-                staticWidth: 0
             });
 
-            if (this.width < map.staticWidth) {
+            if (containerSize < staticSize) {
                 return [];
             }
 
-            var del = this.width - map.basisSum;
+            del = containerSize - basisSum;
+            isGrow = del >= 0;
 
-            if (allSpill) {
-                var match = [];
-                var maxWidth = 0;
-                var radio = del >= 0 ?
-                    (map.growSum ? del / map.growSum : 0) :
-                    (map.shrinkSum ? del / map.shrinkSum : 0);
+            if (noSpillIndex < 0) {
+                radio = isGrow ?
+                    (growSum ? del / growSum : 0) :
+                    (shrinkSum ? del / shrinkSum : 0);
 
-                map.grow.forEach(function (grow, i) {
-                    var width = map.basis[i] + (
-                        del >= 0 ? radio * grow : radio * map.shrink[i] * map.basis[i]
+                match = getUltimates(grow.length, function (index) {
+                    return basis[index] + (
+                        isGrow ? radio * grow[index] : radio * shrink[index] * basis[index]
                     );
+                }, 1);
 
-                    if (width > maxWidth) {
-                        match = [i];
-                        maxWidth = width;
-                    } else if (width === maxWidth) {
-                        match.push(i);
-                    }
-                });
-                maxWidth = Infinity;
-                match = match.reduce(function (arr, index) {
-                    var width = map.contentWidth[index];
-
-                    if (width < maxWidth) {
-                        arr = [index];
-                        maxWidth = width;
-                    } else if (width === maxWidth) {
-                        arr.push(index);
-                    }
-
-                    return arr;
-                }, []);
+                match = getUltimates(match, function (index) {
+                    return contentSize[index];
+                }, 0);
 
             } else {
-                var targetIndex = map.spill.reduce(function (targetIndex, value, index) {
-                    return value ? targetIndex : index;
-                }, -1);
-
-                var targetRatio = (map.contentWidth[targetIndex] - map.basis[targetIndex]) / (
-                    del >= 0 ? map.grow[targetIndex] : map.shrink[targetIndex] * map.basis[targetIndex]
+                radio = (contentSize[noSpillIndex] - basis[noSpillIndex]) / (
+                    isGrow ? grow[noSpillIndex] : shrink[noSpillIndex] * basis[noSpillIndex]
                 );
 
-                match = map.spill.reduce(function (arr, spill, i) {
-                    if (spill) {
-                        var width = map.basis[i] + targetRatio * (
-                            del >= 0 ? map.grow[i] : map.shrink[i] * map.basis[i]
-                        );
+                match = grow.reduce(function (arr, spill, i) {
+                    var size = basis[i] + radio * (
+                        isGrow ? grow[i] : shrink[i] * basis[i]
+                    );
 
-                        if (width >= map.contentWidth[i]) {
-                            arr.push(i);
-                        }
-                    } else {
+                    if (size >= contentSize[i]) {
                         arr.push(i);
                     }
+
                     return arr;
                 }, []);
             }
 
-            return match || [];
+            return match;
+        }
+    },
+
+    watch: {
+        resets: {
+            deep: true,
+            handler: function () {
+                var vm = this;
+                vm.resets.slice(0).forEach(function (index) {
+                    vm.$children[index].$emit('reset');
+                });
+            }
         }
     },
 
     mounted: function () {
         var vm = this;
 
-        this.sensor = new ResizeSensor(vm.$el, function () {
-
-            if (vm.$el.offsetWidth > vm.width) {
-                var match = vm.flexes.slice(0);
-                vm.$children.forEach(function (child, i) {
-                    child.$emit('recalculation', match.indexOf(i) >= 0);
-                });
-            }
-
-            vm.width = vm.$el.offsetWidth;
+        this.sensor = new ResizeSensor(vm.$el, function (width, height) {
+            vm.width = width;
+            vm.height = height;
         });
 
         vm.width = vm.$el.offsetWidth;
+        vm.height = vm.$el.offsetHeight;
     }
 };
 

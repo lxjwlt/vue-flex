@@ -156,8 +156,9 @@ var ieComponent = {
         return {
             width: 0,
             height: 0,
-            spill: false,
+            spill: 0,
             contentWidth: 0,
+            contentHeight: 0,
             'padding-left': '0px',
             'padding-right': '0px',
             'padding-bottom': '0px',
@@ -192,7 +193,11 @@ var ieComponent = {
             var obj = util.assign({}, this.css);
 
             if (this.spill) {
-                obj.minWidth = obj.maxWidth = this.contentWidth;
+                if (this.isColumn) {
+                    obj.minHeight = obj.maxHeight = this.contentHeight;
+                } else {
+                    obj.minWidth = obj.maxWidth = this.contentWidth;
+                }
             }
 
             obj.flexBasis = obj.msFlexPreferredSize =
@@ -234,26 +239,22 @@ var ieComponent = {
 
         function calculation () {
             vm.contentWidth = vm.$refs.inner.offsetWidth;
+            vm.contentHeight = vm.$refs.inner.offsetHeight;
 
-            if (vm.$el.offsetWidth < vm.contentWidth) {
-                vm.spill = true;
+            if (!vm.isColumn && vm.$el.offsetWidth < vm.contentWidth ||
+                vm.isColumn && vm.$el.offsetHeight < vm.contentHeight) {
+                vm.spill = 1;
             }
         }
 
-        new ResizeSensor(this.$refs.inner, function () {
-            calculation();
-        });
-
-        new ResizeSensor(this.$el, function () {
+        new ResizeSensor([this.$refs.inner, this.$el], function () {
             calculation();
         });
 
         calculation();
 
-        vm.$on('recalculation', function (reset) {
-            if (reset) {
-                vm.spill = false;
-            }
+        vm.$on('reset', function () {
+            vm.spill = 0;
         });
     },
 
