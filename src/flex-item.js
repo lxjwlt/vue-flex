@@ -240,14 +240,18 @@ var ieComponent = {
             }
         }
 
-        new ResizeSensor([this.$refs.inner, this.$el], function () {
+        new ResizeSensor(this.$refs.inner, function () {
+            calculation();
+        });
+
+        new ResizeSensor(this.$el, function () {
             calculation();
         });
 
         calculation();
 
-        vm.$on('recalculation', function (width) {
-            if (width > vm.contentWidth) {
+        vm.$on('recalculation', function (reset) {
+            if (reset) {
                 vm.spill = false;
             }
         });

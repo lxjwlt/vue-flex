@@ -85,48 +85,94 @@ var ieComponent = {
     },
     computed: {
         flexes: function () {
+            var allSpill = true;
             var map = this.$children.reduce(function (map, child) {
                 var basis = child.width;
                 map.grow.push(child.cFlex.flexGrow);
                 map.shrink.push(child.cFlex.flexShrink);
                 map.basis.push(basis);
+                map.spill.push(child.spill);
+                map.contentWidth.push(child.contentWidth);
+
                 map.growSum += child.cFlex.flexGrow;
                 map.basisSum += basis;
                 map.shrinkSum += child.cFlex.flexShrink * basis;
+
+                if (child.spill) {
+                    map.staticWidth += child.contentWidth;
+                } else {
+                    allSpill = false;
+                }
+
                 return map;
             }, {
                 width: [],
                 grow: [],
                 shrink: [],
                 basis: [],
+                spill: [],
+                contentWidth: [],
                 basisSum: 0,
                 growSum: 0,
-                shrinkSum: 0
+                shrinkSum: 0,
+                staticWidth: 0
             });
+
+            if (this.width < map.staticWidth) {
+                return [];
+            }
 
             var del = this.width - map.basisSum;
 
-            if (del >= 0) {
-                if (map.growSum) {
-                    map.grow.forEach(function (grow, i) {
-                        map.width[i] = map.basis[i] + del * grow / map.growSum;
-                    })
-                } else {
-                    map.width = map.basis;
-                }
+            if (allSpill) {
+                var match = [];
+                var maxWidth = 0;
+                var radio = map.growSum ? del / map.growSum : 0;
+
+                map.grow.forEach(function (grow, i) {
+                    var width = map.basis[i] + radio * grow;
+
+                    if (width > maxWidth) {
+                        match = [i];
+                        maxWidth = width;
+                    } else if (width === maxWidth) {
+                        match.push(i);
+                    }
+                });
+                maxWidth = Infinity;
+                match = match.reduce(function (arr, index) {
+                    var width = map.contentWidth[index];
+
+                    if (width < maxWidth) {
+                        arr = [index];
+                        maxWidth = width;
+                    } else if (width === maxWidth) {
+                        arr.push(index);
+                    }
+
+                    return arr;
+                }, []);
 
             } else {
-                if (map.growSum) {
-                    map.shrink.forEach(function (shrink, i) {
-                        map.width[i] = map.basis[i] - del * map.basis[i] * shrink / map.shrinkSum;
-                    });
-                } else {
-                    map.width = map.basis;
-                }
+                var targetIndex = map.spill.reduce(function (targetIndex, value, index) {
+                    return value ? targetIndex : index;
+                }, -1);
 
+                var targetRatio = (map.contentWidth[targetIndex] - map.basis[targetIndex]) / map.grow[targetIndex];
+
+                match = map.spill.reduce(function (arr, spill, i) {
+                    if (spill) {
+                        if (map.basis[i] + targetRatio * map.grow[i] >= map.contentWidth[i]) {
+                            arr.push(i);
+                        }
+                    } else {
+                        arr.push(i);
+                    }
+                    return arr;
+                }, []);
             }
 
-            return map;
+            return match || [];
         }
     },
 
@@ -136,8 +182,9 @@ var ieComponent = {
         this.sensor = new ResizeSensor(vm.$el, function () {
 
             if (vm.$el.offsetWidth > vm.width) {
+                var match = vm.flexes.slice(0);
                 vm.$children.forEach(function (child, i) {
-                    child.$emit('recalculation', vm.flexes.width[i]);
+                    child.$emit('recalculation', match.indexOf(i) >= 0);
                 });
             }
 
