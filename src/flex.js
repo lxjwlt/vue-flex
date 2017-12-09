@@ -127,10 +127,14 @@ var ieComponent = {
             if (allSpill) {
                 var match = [];
                 var maxWidth = 0;
-                var radio = map.growSum ? del / map.growSum : 0;
+                var radio = del >= 0 ?
+                    (map.growSum ? del / map.growSum : 0) :
+                    (map.shrinkSum ? del / map.shrinkSum : 0);
 
                 map.grow.forEach(function (grow, i) {
-                    var width = map.basis[i] + radio * grow;
+                    var width = map.basis[i] + (
+                        del >= 0 ? radio * grow : radio * map.shrink[i] * map.basis[i]
+                    );
 
                     if (width > maxWidth) {
                         match = [i];
@@ -158,11 +162,17 @@ var ieComponent = {
                     return value ? targetIndex : index;
                 }, -1);
 
-                var targetRatio = (map.contentWidth[targetIndex] - map.basis[targetIndex]) / map.grow[targetIndex];
+                var targetRatio = (map.contentWidth[targetIndex] - map.basis[targetIndex]) / (
+                    del >= 0 ? map.grow[targetIndex] : map.shrink[targetIndex] * map.basis[targetIndex]
+                );
 
                 match = map.spill.reduce(function (arr, spill, i) {
                     if (spill) {
-                        if (map.basis[i] + targetRatio * map.grow[i] >= map.contentWidth[i]) {
+                        var width = map.basis[i] + targetRatio * (
+                            del >= 0 ? map.grow[i] : map.shrink[i] * map.basis[i]
+                        );
+
+                        if (width >= map.contentWidth[i]) {
                             arr.push(i);
                         }
                     } else {
